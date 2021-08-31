@@ -38,8 +38,9 @@
 </template>
 
 <script>
-import {reactive} from 'vue';
-import { ref, set, push } from "firebase/database";
+
+import { reactive, ref } from "vue";
+import { ref as fireRef, set, push } from "firebase/database";
 import {db} from "./db"
 
 
@@ -67,7 +68,7 @@ export default {
         username: state.username,
         content: inputMessage.value
       }
-	  set(push(ref(db, 'messages')), message);
+	set(push(fireRef(db, "messages")), message);
 
     //   messagesRef.push(message);
       inputMessage.value = "";
