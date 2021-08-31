@@ -1,7 +1,8 @@
 
 <template>
-<div class="view login" v-if="state.username === '' || state.username === null">
+<img src="./img/logo.png">
 
+<div class="view login" v-if="state.username === '' || state.username === null">
   <form class="login-form" @submit.prevent="Login">
     <div class="form-inner">
     <h1>Login first</h1>
@@ -22,8 +23,8 @@
 
 </section>
 <footer>
-  <form @submit.prevent=""> 
-    <input type="text" placeholder="Write a Mwssage"/>
+  <form @submit.prevent="SendMessage"> 
+    <input type="text" v-model="inputMessage" placeholder="Write a Mwssage"/>
     <input type="submit" value="Send"/>
   </form>
 </footer>
@@ -33,13 +34,13 @@
 
 <script>
 import {reactive, ref} from 'vue';
-// import db from './db'
-
+import db from './db'
 export default {
   setup(){
     state;
     let inputUsername = ref("");
-    const state = reactive({
+	let inputMessage = ref("");
+	const state = reactive({
         username: "",
           messages:[]
     })
@@ -49,13 +50,27 @@ export default {
        inputUsername = "";
       }
     }
+    const SendMessage = () => {
+	  console.log("Db", db);
+	  const messagesRef = db.database().ref("message");
+      if (inputMessage.value === "" || inputMessage.value === null) {
+        return;
+      }
+      const message = {
+        username: state.username,
+        content: inputMessage.value
+      }
+      messagesRef.push(message);
+      inputMessage.value = "";
+    }
     return{
     inputUsername,
     Login,
-    state
+    state,
+	inputMessage,
+	SendMessage
     }
   }
-
 }
 </script>
 
@@ -72,13 +87,13 @@ export default {
 	display: flex;
 	justify-content: center;
 	min-height: 100vh;
-	background-color: #ea526f;
+	background-color: #642d82;
 	
 	&.login {
 		align-items: center;
 		.login-form {
 			display: block;
-			width: 100%;
+			width: 50%;
 			padding: 15px;
 			
 			.form-inner {
@@ -128,7 +143,7 @@ export default {
 					display: block;
 					width: 100%;
 					padding: 10px 15px;
-					background-color: #ea526f;
+					background-color: #dd6730;
 					border-radius: 8px;
 					color: #FFF;
 					font-size: 18px;
@@ -136,7 +151,7 @@ export default {
 				}
 				&:focus-within {
 					label {
-						color: #ea526f;
+						color: #dd6730;
 					}
 					input[type="text"] {
 						background-color: #FFF;
@@ -212,7 +227,7 @@ export default {
 						.content {
 							color: #FFF;
 							font-weight: 600;
-							background-color: #ea526f;
+							background-color: #dd6730;
 						}
 					}
 				}
@@ -256,7 +271,7 @@ export default {
 					display: block;
 					padding: 10px 15px;
 					border-radius: 0px 8px 8px 0px;
-					background-color: #ea526f;
+					background-color: #dd6730;
 					color: #FFF;
 					font-size: 18px;
 					font-weight: 700;
