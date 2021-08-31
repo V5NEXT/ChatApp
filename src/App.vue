@@ -22,37 +22,44 @@
 <section class="chat-box">
 
 </section>
-<footer>
-  <form @submit.prevent="SendMessage"> 
-    <input type="text" v-model="inputMessage" placeholder="Write a Mwssage"/>
-    <input type="submit" value="Send"/>
-  </form>
-</footer>
+    <footer>
+      <form @submit.prevent="SendMessage">
+        <input 
+          type="text" 
+          v-model="inputMessage" 
+          placeholder="Write a message..." />
+        <input 
+          type="submit" 
+          value="Send" />
+      </form>
+    </footer>
 </div>
 
 </template>
 
 <script>
-import {reactive, ref} from 'vue';
-import db from './db'
+import {reactive} from 'vue';
+import { ref, set, push } from "firebase/database";
+import {db} from "./db"
+
+
 export default {
   setup(){
-    state;
-    let inputUsername = ref("");
-	let inputMessage = ref("");
+    const inputUsername = ref("");
+	const inputMessage = ref("");
 	const state = reactive({
         username: "",
-          messages:[]
-    })
+        messages:[]
+    });
+
     const Login = () =>{
       if(inputUsername.value != "" || inputUsername.value != null){
        state.username = inputUsername.value;
-       inputUsername = "";
+       inputUsername.value = "";
       }
     }
     const SendMessage = () => {
-	  console.log("Db", db);
-	  const messagesRef = db.database().ref("message");
+	//   const messagesRef = db.database().ref("messages");
       if (inputMessage.value === "" || inputMessage.value === null) {
         return;
       }
@@ -60,7 +67,9 @@ export default {
         username: state.username,
         content: inputMessage.value
       }
-      messagesRef.push(message);
+	  set(push(ref(db, 'messages')), message);
+
+    //   messagesRef.push(message);
       inputMessage.value = "";
     }
     return{
